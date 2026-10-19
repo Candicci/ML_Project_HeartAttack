@@ -28,11 +28,22 @@ def load_csv_data(data_path, sub_sample=False):
         dtype=int,
         usecols=1,
     )
-    x_train = np.genfromtxt(
-        os.path.join(data_path, "x_train.csv"), delimiter=",", skip_header=1
+    # np.loadtxt instead of np.genfromtxt: genfromtxt needs >6 GB of RAM on these # Added
+    # files (kernel gets OOM-killed), loadtxt ~1 GB. Empty fields become NaN.     # Added
+    def missing_to_nan(s):              # Added
+        return float(s or "nan")        # Added
+
+    x_train = np.loadtxt(
+        os.path.join(data_path, "x_train.csv"),
+        delimiter=",",
+        skiprows=1,
+        converters=missing_to_nan, # Added
     )
-    x_test = np.genfromtxt(
-        os.path.join(data_path, "x_test.csv"), delimiter=",", skip_header=1
+    x_test = np.loadtxt(
+        os.path.join(data_path, "x_test.csv"),
+        delimiter=",",
+        skiprows=1,
+        converters=missing_to_nan, # Added
     )
 
     train_ids = x_train[:, 0].astype(dtype=int)
