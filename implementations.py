@@ -67,7 +67,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
-     """Linear regression using gradient descent on the MSE loss.
+    """Linear regression using gradient descent on the MSE loss.
  
     Args:
         y (np.ndarray): labels, shape (N,)
@@ -81,11 +81,10 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
             loss (float) is the MSE loss evaluated at w
     """
     w = initial_w
-    loss = compute_mse_loss(y, tx, w)
     for _ in range(max_iters):
         grad = compute_mse_gradient(y, tx, w)
         w = w - gamma * grad
-        loss = compute_mse_loss(y, tx, w)
+    loss = compute_mse_loss(y, tx, w)
     return w, loss
 
 
@@ -94,10 +93,12 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     Returns (w, loss).
     """
     w = initial_w
-    loss = compute_mse_loss(y, tx, w)
     for _ in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=1, num_batches=1):
             grad = compute_mse_gradient(y_batch, tx_batch, w)
             w = w - gamma * grad
-        loss = compute_mse_loss(y, tx, w)
+    loss = compute_mse_loss(y, tx, w)
     return w, loss
+
+
+def logistic
