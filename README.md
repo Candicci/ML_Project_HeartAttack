@@ -6,3 +6,8 @@ pip install black
 black .                    # format every .py file in the current folder
 black implementations.py   # format one file
 black --check .            # only report which files would change; edit nothing
+
+
+NB: necessary for running test
+
+pip install pytest 
