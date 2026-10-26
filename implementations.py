@@ -88,14 +88,30 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
 
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
-    """Linear regression using stochastic gradient descent (batch size 1).
-    Returns (w, loss).
+    """Linear regression using stochastic gradient descent (batch size 1) on the MSE loss.
+
+    Args:
+        y (np.ndarray): labels, shape (N,)
+        tx (np.ndarray): feature matrix, shape (N, D)
+        initial_w (np.ndarray): initial weight vector, shape (D,)
+        max_iters (int): number of SGD steps (one random datapoint per step)
+        gamma (float): step size (learning rate)
+
+    Gradient step (n drawn uniformly from {1, ..., N}):
+        grad L_n(w) = -x_n (y_n - x_n^T w)
+        w <- w - gamma * grad L_n(w)
+
+    Returns:
+        tuple: (w, loss) where w (shape (D,)) is the last weight vector and
+            loss (float) is the MSE loss on the full dataset evaluated at w
     """
     w = initial_w
     for _ in range(max_iters):
-        for y_batch, tx_batch in batch_iter(y, tx, batch_size=1, num_batches=1):
-            grad = compute_mse_gradient(y_batch, tx_batch, w)
-            w = w - gamma * grad
+        # sample one datapoint directly instead of batch_iter, which shuffles and
+        # copies the whole dataset at every step; n:n+1 keeps tx 2D for the gradient
+        n = np.random.randint(len(y))
+        grad = compute_mse_gradient(y[n : n + 1], tx[n : n + 1], w)
+        w = w - gamma * grad
     loss = compute_mse_loss(y, tx, w)
     return w, loss
 
