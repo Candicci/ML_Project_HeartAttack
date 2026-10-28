@@ -204,3 +204,51 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     # loss without penalty term as indicated in instructions
     loss = negative_log_likelihood(y, tx, w)
     return w, loss
+
+
+def least_squares(y, tx):
+    """Least squares regression using the normal equations.
+
+    Args:
+        y (np.ndarray): labels, shape (N,)
+        tx (np.ndarray): feature matrix, shape (N, D)
+
+    Normal equations:
+        X^T X w = X^T y
+
+    Returns:
+        tuple: (w, loss) where w (shape (D,)) is the optimal weight vector and
+            loss (float) is the MSE loss evaluated at w
+    """
+    # solve the linear system instead of inverting X^T X (faster and more stable)
+    w = np.linalg.solve(tx.T @ tx, tx.T @ y)
+    loss = compute_mse_loss(y, tx, w)
+    return w, loss
+
+
+def ridge_regression(y, tx, lambda_):
+    """Ridge regression using the normal equations.
+
+    Minimizes the penalized objective
+        L(w) + lambda * ||w||^2
+    where L(w) is the MSE loss.
+
+    Args:
+        y (np.ndarray): labels, shape (N,)
+        tx (np.ndarray): feature matrix, shape (N, D)
+        lambda_ (float): regularization strength lambda >= 0
+
+    Normal equations:
+        (X^T X + 2N * lambda * I) w = X^T y
+
+    Returns:
+        tuple: (w, loss) where w (shape (D,)) is the optimal weight vector and
+            loss (float) is the MSE loss at w WITHOUT the penalty term
+    """
+    N, D = tx.shape
+    # lambda' = 2N * lambda, following course convention
+    a = tx.T @ tx + 2 * N * lambda_ * np.eye(D)
+    w = np.linalg.solve(a, tx.T @ y)
+    # loss without penalty term as indicated in instructions
+    loss = compute_mse_loss(y, tx, w)
+    return w, loss
